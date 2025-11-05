@@ -105,6 +105,21 @@ jobs:
           fi
           
           $REPO --trace sync -c -j$(nproc --all) --no-tags --fail-fast
+
+      - name: Cherry-pick Custom Commits
+        run: |
+          echo "Cherry-picking custom commits into $CONFIG/common..."
+          cd "$CONFIG/common"
+
+          # Set gitconfig
+          git config --global user.name "mizdrake14"
+          git config --global user.email "mizdrake14@gmail.com"
+
+          # Fetch the specific branch from the remote repository
+          git fetch https://github.com/mizdrake7/WILDFlower-android13-5.15-common-GKI new
+
+          # Cherry-pick the specified range of commits
+          git cherry-pick d220c4cd8b0e4be6c5bd7f0bff11db100607191c^..af7baa8b6dfa5d5c3f56bad12880cc1693be5099
           
       - name: Check Directory Space Usage
         run: |
@@ -495,7 +510,7 @@ jobs:
         run: |
           cd "$CONFIG"
           #Add Wild to Kernel Version
-          sed -i '$s|echo "\$res"|echo "\$res-Wild"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "\$res-WildFlower"|' ./common/scripts/setlocalversion
           #Set Kernel Timestamp
           perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Sun Apr 20 04:20:00 UTC 2025"}' ./common/scripts/mkcompile_h
           if [ -f "build/build.sh" ]; then
